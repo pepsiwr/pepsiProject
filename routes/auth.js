@@ -1,8 +1,11 @@
 import express from 'express';
 // import bcrypt from 'bcryptjs';
 import Username from '../models/User.js'; // ดึง Model มาใช้
+import Transaction from '../models/Transaction.js';
 
 const router = express.Router();
+// เพิ่มไว้เหนือ router.post('/register', ...)
+router.get('/test', (req, res) => res.send("Router is working!"));
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -57,6 +60,39 @@ router.post('/login', async (req, res) => {
             }
         });
 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.post('/add-transaction', async (req, res) => {
+    try {
+        const { userId, type, amount, category, note, slipData } = req.body;
+
+        const newTransaction = new Transaction({
+            userId,      // ID ของคนที่ Login อยู่
+            type,        // 'income' หรือ 'expense'
+            amount,
+            category,
+            note,
+            slipData
+        });
+
+        await newTransaction.save();
+        res.status(201).json({ message: "บันทึกข้อมูลสำเร็จ! ✅" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+router.get('/my-transactions/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // ค้นหารายการทั้งหมดที่มี userId ตรงกับคนที่ส่งมา
+        // .sort({ date: -1 }) คือให้เรียงจากใหม่ไปเก่า
+        const transactions = await Transaction.find({ userId }).sort({ date: -1 });
+
+        res.json(transactions);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
