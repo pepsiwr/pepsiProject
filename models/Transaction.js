@@ -31,5 +31,5 @@ const transactionSchema = new mongoose.Schema({
         type: Object // สำหรับเก็บข้อมูลดิบที่ได้จาก SlipOk (ถ้ามี)
     }
 }, { timestamps: true }); // timestamps จะช่วยเก็บวันที่สร้าง (createdAt) และแก้ไข (updatedAt) ให้อัตโนมัติ
-
-export default mongoose.model('Transaction', transactionSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
+export default Transaction;
