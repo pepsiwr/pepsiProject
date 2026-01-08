@@ -2,6 +2,7 @@ import express from 'express';
 // import bcrypt from 'bcryptjs';
 import Username from '../models/User.js'; // ดึง Model มาใช้
 import Transaction from '../models/Transaction.js';
+import axios from 'axios';
 
 const router = express.Router();
 // เพิ่มไว้เหนือ router.post('/register', ...)
@@ -95,6 +96,38 @@ router.get('/my-transactions/:userId', async (req, res) => {
         res.json(transactions);
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+// API สำหรับตรวจสอบสลิปด้วยข้อความ QR (Payload)
+router.post('/verify-slip-qr', async (req, res) => {
+    try {
+        const { qrData } = req.body;
+
+        if (!qrData) {
+            return res.status(400).json({ message: "ไม่พบข้อมูล QR Code" });
+        }
+
+        // วิธีที่ถูกต้องสำหรับส่ง Payload (String): ใช้ GET และต่อท้าย URL
+        // รูปแบบ: https://developer.easyslip.com/api/v1/verify?payload=000201...
+        const response = await axios.get(`https://developer.easyslip.com/api/v1/verify`, {
+            params: {
+                payload: qrData // axios จะเอาไปต่อท้าย URL ให้เองเป็น ?payload=...
+            },
+            headers: {
+                'Authorization': `Bearer 8d69151b-f53d-4a44-b73e-026a89221572`
+            }
+        });
+
+        res.status(200).json(response.data);
+
+    } catch (error) {
+        console.error("EasySlip Error Details:", error.response?.data || error.message);
+
+        // ถ้าขึ้น 404 อีกครั้ง ให้ลองเช็คว่า Token ของคุณเป็นของ Apps ประเภทใด 
+        // บางครั้ง API URL อาจต้องระบุเวอร์ชันให้ชัดเจน
+        const errorMsg = error.response?.data?.message || "เกิดข้อผิดพลาดในการตรวจสอบสลิป";
+        res.status(error.response?.status || 500).json({ message: errorMsg });
     }
 });
 export default router;
