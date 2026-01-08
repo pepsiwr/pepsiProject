@@ -4,6 +4,8 @@ import Username from '../models/User.js'; // ดึง Model มาใช้
 import Transaction from '../models/Transaction.js';
 
 const router = express.Router();
+// เพิ่มไว้เหนือ router.post('/register', ...)
+router.get('/test', (req, res) => res.send("Router is working!"));
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -97,6 +99,5 @@ router.get('/my-transactions/:userId', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-// เพิ่มไว้เหนือ router.post('/register', ...)
-router.get('/test', (req, res) => res.send("Router is working!"));
+
 export default router;
