@@ -39,10 +39,8 @@ app.use('/api', authRoutes);
 
 export default app;
 
+// ส่วน app.listen ให้ครอบด้วยเงื่อนไข เพื่อไม่ให้รันซ้ำซ้อนบน Vercel
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, async () => {
-        console.log(`Server running on port ${PORT}`);
-        // await connectDB(); // เพิ่มบรรทัดนี้เพื่อให้เชื่อมต่อทันทีที่รันในเครื่องตัวเอง
-    });
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
