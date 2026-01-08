@@ -4,7 +4,7 @@ const transactionSchema = new mongoose.Schema({
     // ส่วนสำคัญ: เก็บ ID ของ User ที่เป็นเจ้าของรายการนี้
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Username', // ชื่อ Model ต้องตรงกับที่คุณตั้งไว้ใน User.js
+        ref: 'username', // ชื่อ Model ต้องตรงกับที่คุณตั้งไว้ใน User.js
         required: true
     },
     type: {
