@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const uri = 'mongodb+srv://wiwadrudchad_db_user:jr7UqVI2YVvkpG2w@pepsi001.u1ry6l7.mongodb.net/myApp?retryWrites=true&w=majority&appName=pepsi001';
+const uri = 'mongodb+srv://wiwadrudchad_db_user:2azM9K69mYL75t4g@pepsi001.u1ry6l7.mongodb.net/myApp?retryWrites=true&w=majority&appName=pepsi001';
 mongoose.connect(uri)
     .then(() => console.log("เชื่อมต่อ MongoDB สำเร็จ! ✅"))
     .catch((err) => console.error("เชื่อมต่อผิดพลาด: ❌", err));
