@@ -97,4 +97,6 @@ router.get('/my-transactions/:userId', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+// เพิ่มไว้เหนือ router.post('/register', ...)
+router.get('/test', (req, res) => res.send("Router is working!"));
 export default router;
