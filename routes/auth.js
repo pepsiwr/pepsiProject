@@ -68,21 +68,32 @@ router.post('/login', async (req, res) => {
 
 router.post('/add-transaction', async (req, res) => {
     try {
-        const { userId, type, amount, category, note, slipData } = req.body;
+        // รับค่า date เพิ่มเติมจาก Frontend
+        const { userId, type, amount, category, note, date, transRef } = req.body;
 
         const newTransaction = new Transaction({
-            userId,      // ID ของคนที่ Login อยู่
-            type,        // 'income' หรือ 'expense'
+            userId,
+            type,
             amount,
             category,
             note,
-            slipData
+            date: (date && date !== "") ? date : new Date(), // ถ้ามีวันที่จากสลิปให้ใช้ตามนั้น ถ้าไม่มีให้ใช้วันที่ปัจจุบัน
+            transRef: transRef || undefined // รหัสอ้างอิงจาก EasySlip ถ้าไม่มี transRef ให้ส่งเป็น undefined
         });
 
         await newTransaction.save();
         res.status(201).json({ message: "บันทึกข้อมูลสำเร็จ! ✅" });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.log("Full Error:", err); // ดูบรรทัดนี้ใน Terminal ของ Backend
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ message: "ข้อมูลไม่ถูกต้อง", details: err.errors });
+        }
+        // ตรวจสอบกรณีบันทึกเลข transRef ซ้ำ (สลิปเดิมแสกนสองรอบ)
+        if (err.code === 11000) {
+            return res.status(400).json({ message: "รายการนี้ถูกบันทึกไปแล้ว (สลิปซ้ำ) ❌" });
+        }
+        console.error("Add Transaction Error:", err);
+        res.status(500).json({ message: "เกิดข้อผิดพลาดภายในระบบ" });
     }
 });
 router.get('/my-transactions/:userId', async (req, res) => {
