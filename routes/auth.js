@@ -96,6 +96,17 @@ router.post('/add-transaction', async (req, res) => {
         res.status(500).json({ message: "เกิดข้อผิดพลาดภายในระบบ" });
     }
 });
+// ในไฟล์ routes หรือ server.js
+router.delete('/delete-transaction/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        // ตัวอย่างการใช้ Mongoose ลบข้อมูล
+        await Transaction.findByIdAndDelete(id);
+        res.status(200).json({ message: "ลบรายการสำเร็จ" });
+    } catch (err) {
+        res.status(500).json({ message: "เกิดข้อผิดพลาดในการลบ" });
+    }
+});
 router.get('/my-transactions/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
